@@ -5,6 +5,7 @@
   "description": "Astraea — a free, public Astrology API: natal birth charts, planetary positions, houses, aspects, transits, synastry & interpretations. Powered by astronomy-engine.",
   "author": "Md. Latiful Kabir",
   "license": "MIT",
+  "homepage": "https://astraea-dev.vercel.app",
   "type": "commonjs",
   "scripts": {
     "dev": "tsx watch src/server.ts",

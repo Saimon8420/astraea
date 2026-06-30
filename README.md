@@ -4,6 +4,9 @@ A **free, public, no-key REST API** for Western tropical astrology. Send a birth
 
 Built with **Node + Express + TypeScript**, deployed as a single serverless function on **Vercel**. Interactive docs (Scalar) live at the root URL; the machine-readable OpenAPI spec is at `/openapi.json` — import it straight into Postman or Insomnia.
 
+**🔗 Live API & docs:** **https://astraea-dev.vercel.app**
+**📖 OpenAPI spec:** https://astraea-dev.vercel.app/openapi.json
+
 > **Astraea** — every planet, house and aspect of a birth moment, in one clean API.
 
 ---
@@ -75,12 +78,12 @@ The "data" is really **three ingredients**:
 
 ```bash
 # A full natal chart (POST with JSON)
-curl -X POST http://localhost:4000/v1/natal \
+curl -X POST https://astraea-dev.vercel.app/v1/natal \
   -H "content-type: application/json" \
   -d '{"date":"1995-03-15","time":"14:30","lat":23.81,"lng":90.41}'
 
 # Where are the planets right now?
-curl http://localhost:4000/v1/positions
+curl https://astraea-dev.vercel.app/v1/positions
 ```
 
 ```jsonc
