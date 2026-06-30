@@ -32,6 +32,15 @@ export function errorHandler(err: unknown, _req: Request, res: Response, _next: 
     return;
   }
 
+  // Malformed JSON body (from express.json) → 400, not 500.
+  if (err && typeof err === "object" && (err as { type?: string }).type === "entity.parse.failed") {
+    res.status(400).json({
+      success: false,
+      error: { code: "INVALID_JSON", message: "Request body is not valid JSON." },
+    });
+    return;
+  }
+
   const message = err instanceof Error ? err.message : "Unexpected error";
   res.status(500).json({
     success: false,

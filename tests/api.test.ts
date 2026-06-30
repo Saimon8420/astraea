@@ -45,6 +45,33 @@ describe("POST /v1/natal", () => {
     const res = await request(app).post("/v1/natal").send({ date: "1990-01-15", time: "12:30" });
     expect(res.status).toBe(400);
   });
+
+  it("ignores empty-string optional fields (Scalar autofill)", async () => {
+    const res = await request(app)
+      .post("/v1/natal")
+      .send({ ...PERSON_A, tz: "", orb: "" });
+    expect(res.status).toBe(200);
+  });
+
+  it("rejects an invalid timezone with 400 (not a 500 crash)", async () => {
+    const res = await request(app).post("/v1/natal").send({ ...PERSON_A, tz: "Not/AZone" });
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("rejects an out-of-range birth year with 400", async () => {
+    const res = await request(app).post("/v1/natal").send({ date: "0095-01-01", lat: 0, lng: 0 });
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 (not 500) for malformed JSON", async () => {
+    const res = await request(app)
+      .post("/v1/natal")
+      .set("content-type", "application/json")
+      .send('{"date":"1990-01-15", oops}');
+    expect(res.status).toBe(400);
+    expect(res.body.error.code).toBe("INVALID_JSON");
+  });
 });
 
 describe("GET /v1/positions", () => {
