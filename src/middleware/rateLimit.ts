@@ -27,7 +27,9 @@ function buildLimiter(): Limiter {
 
   if (url && token) {
     const ratelimit = new Ratelimit({
-      redis: new Redis({ url, token }),
+      // Bounded retries so an Upstash hiccup can't add long latency to a request
+      // (and so the fail-open path below kicks in quickly).
+      redis: new Redis({ url, token, retry: { retries: 1, backoff: () => 0 } }),
       limiter: Ratelimit.slidingWindow(perMinute, "60 s"),
       prefix: "astraea",
     });
@@ -70,8 +72,20 @@ function clientId(req: Request): string {
 
 export const rateLimit: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   if (!limiter) limiter = buildLimiter();
-  const { success, limit, remaining, resetMs } = await limiter(clientId(req));
 
+  let result;
+  try {
+    result = await limiter(clientId(req));
+  } catch (err) {
+    // Fail open: a rate-limiter outage or exhausted Upstash quota must never
+    // break the API. Allow the request and log it for visibility.
+    // eslint-disable-next-line no-console
+    console.warn(`[astraea] rate limiter unavailable — allowing request: ${err instanceof Error ? err.message : err}`);
+    next();
+    return;
+  }
+
+  const { success, limit, remaining, resetMs } = result;
   res.setHeader("X-RateLimit-Limit", limit);
   res.setHeader("X-RateLimit-Remaining", remaining);
   res.setHeader("X-RateLimit-Reset", Math.ceil(resetMs / 1000));
