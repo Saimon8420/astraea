@@ -6,9 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Free public Astrology API: natal birth charts, planetary positions, houses, aspects, transits, synastry & interpretations. Powered by astronomy-engine." />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>" />
+    <style>
+      /* Force a clean, fully-white docs surface (sidebar, content, panels).
+         Code sample/request blocks keep their own dark styling for contrast. */
+      .light-mode {
+        --scalar-background-1: #ffffff;
+        --scalar-background-2: #ffffff;
+        --scalar-background-3: #ffffff;
+        --scalar-background-accent: #ffffff;
+        --scalar-sidebar-background-1: #ffffff;
+        --scalar-sidebar-search-background: #ffffff;
+        --scalar-header-background-1: #ffffff;
+      }
+      /* Follow the active theme so light mode is white and dark mode stays dark. */
+      body { background: var(--scalar-background-1); }
+    </style>
   </head>
   <body>
-    <script id="api-reference" data-configuration='{"url":"/openapi.json","theme":"moon"}'></script>
+    <script id="api-reference" data-configuration='{"url":"/openapi.json","theme":"default"}'></script>
     <script src="/scalar.js"></script>
   </body>
 </html>
